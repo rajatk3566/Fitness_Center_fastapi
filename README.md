@@ -1,8 +1,12 @@
 # Fitness Center Membership Management Using FastApi
   Fitness Center Membership Management web application using FastApi 
+  
 # Features Added 
 
-Admin Endpoints (is_admin=True)
+* User Authentication with JWT
+* Implemented protected routes and role-based access control(Admin/User)
+
+Admin Endpoints (To make an admin, go to the database and change 0 to 1)
 
 1) Add a member
 2) Update member details
@@ -16,6 +20,8 @@ User Endpoints
 2) Renew membership
 3) View payment & renewal history
 
+Swagger : ``` http://127.0.0.1:8000/docs ```
+ 
 # Folder Structure
 ```
 └── 📁Fitness_center
