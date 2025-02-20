@@ -16,5 +16,5 @@ app.include_router(
 )
 
 @app.get("/")
-async def root():
+def root():
     return {"message": "Welcome to Fitness Center API"}
