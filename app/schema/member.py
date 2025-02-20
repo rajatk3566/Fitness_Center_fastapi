@@ -6,6 +6,7 @@ class MemberBase(BaseModel):
     membership_status: bool
     membership_start: datetime
     membership_end: datetime
+    
 
 class MemberCreate(MemberBase):
     user_id: int

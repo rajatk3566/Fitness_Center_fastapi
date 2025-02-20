@@ -1,8 +1,4 @@
-# app/api/deps.py
 from fastapi import Depends, HTTPException, status
-# from sqlalchemy.orm import Session
-# from ..database import get_db
-# from ..core.security import oauth2_scheme
 from ..models.user import User
 from .v1.auth import get_current_user
 

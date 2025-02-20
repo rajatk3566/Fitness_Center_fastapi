@@ -1,6 +1,5 @@
-# app/core/config.py
 from pydantic_settings import BaseSettings
-import os
+from datetime import timedelta
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Fitness Center API"
@@ -8,7 +7,10 @@ class Settings(BaseSettings):
     
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  
+
+    def get_access_token_expiry(self) -> timedelta:
+        return timedelta(minutes=self.ACCESS_TOKEN_EXPIRE_MINUTES)
     
     DB_HOST: str
     DB_USER: str
@@ -17,10 +19,9 @@ class Settings(BaseSettings):
     
     @property
     def DATABASE_URL(self) -> str:
-        return f"mysql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}/{self.DB_NAME}"
+        return "mysql://root:consultadd@localhost:3306/test"
 
     class Config:
-        env_file = ".env"
         from_attributes = True
 
 settings = Settings()

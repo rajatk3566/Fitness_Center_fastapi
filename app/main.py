@@ -6,7 +6,7 @@ from .api.v1.router import api_router
 
 
 Base.metadata.create_all(bind=engine)
-# Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI(title="Fitness Center Management")
 

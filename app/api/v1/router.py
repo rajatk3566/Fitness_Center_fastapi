@@ -9,13 +9,13 @@ api_router.include_router(
     tags=["auth"]
 )
 
-# api_router.include_router(
-#     admin.router,
-#     tags=["admin"]
-# )
+api_router.include_router(
+    admin.router,
+    tags=["admin"]
+)
 
-# api_router.include_router(
-#     members.router,
-#     tags=["members"]
-# )
+api_router.include_router(
+    members.router,
+    tags=["members"]
+)
 
