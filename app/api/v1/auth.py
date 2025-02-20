@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import  OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Any
 from datetime import timedelta
@@ -78,10 +78,6 @@ def login(
         "token_type": "bearer"
     }
 
-
-# @router.post("/logout")
-# def logout():
-#     return {"message": "Successfully logged out"}
 
 @router.get("/me", response_model=User)
 def read_users_me(current_user: User = Depends(get_current_user)) -> Any:

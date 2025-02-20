@@ -1,9 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from datetime import datetime
-
-from ...core.config import settings
 from ...database import get_db
 from ...models.user import User as UserModel
 from ...models.member import Member as MemberModel

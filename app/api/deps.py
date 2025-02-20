@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from ..models.user import User
 from .v1.auth import get_current_user
 
-async def get_current_active_user(
+def get_current_active_user(
     current_user: User = Depends(get_current_user),
 ) -> User:
     if not current_user.is_active:
@@ -12,7 +12,7 @@ async def get_current_active_user(
         )
     return current_user
 
-async def get_current_admin_user(
+def get_current_admin_user(
     current_user: User = Depends(get_current_active_user),
 ) -> User:
     if not current_user.is_admin:

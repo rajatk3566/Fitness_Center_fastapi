@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from ...database import get_db
 from ...models.user import User as UserModel
 from ...models.member import Member as MemberModel
-from ...schema.member import Member, MemberUpdate
+from ...schema.member import Member
 from ..deps import get_current_active_user
 
 router = APIRouter()
