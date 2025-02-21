@@ -9,8 +9,18 @@ from ...models.user import User as UserModel
 from ...database import get_db
 import os
 from dotenv import load_dotenv
+from jose.exceptions import JWTError
 
 load_dotenv()
+from datetime import timedelta
+from jose import JWTError, jwt
+
+SECRET_KEY = "your_secret_key_here"  # Replace with a secure key
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Token expiry time
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")  # Adjust the token URL
 
 
 from ...core.security import (
@@ -77,6 +87,21 @@ def login(
         "access_token": access_token,
         "token_type": "bearer"
     }
+def get_current_admin_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(status_code=403, detail="Not authorized")
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("sub")  # Assuming 'sub' stores user_id
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user or not user.is_admin:  # Check boolean field
+        raise credentials_exception
+    
+    return user
 
 
 @router.get("/me", response_model=User)
