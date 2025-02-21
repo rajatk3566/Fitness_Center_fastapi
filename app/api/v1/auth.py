@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import  OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import Any
 from datetime import timedelta
@@ -20,7 +20,9 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30  # Token expiry time
 from fastapi.security import OAuth2PasswordBearer
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")  # Adjust the token URL
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="api/v1/auth/login"
+)  # Adjust the token URL
 
 
 from ...core.security import (
@@ -28,14 +30,16 @@ from ...core.security import (
     get_password_hash,
     create_access_token,
     get_current_user,
-    ACCESS_TOKEN_EXPIRE_MINUTES
+    ACCESS_TOKEN_EXPIRE_MINUTES,
 )
 
 
 router = APIRouter()
 
+
 def get_user_by_email(db: Session, email: str):
     return db.query(UserModel).filter(UserModel.email == email).first()
+
 
 def authenticate_user(db: Session, email: str, password: str):
     user = get_user_by_email(db, email)
@@ -44,32 +48,28 @@ def authenticate_user(db: Session, email: str, password: str):
     return user
 
 
-
 # Endpoints
 @router.post("/signup", response_model=User, status_code=status.HTTP_201_CREATED)
 def signup(*, db: Session = Depends(get_db), user_in: UserCreate) -> Any:
     user = get_user_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered"
         )
-    
+
     hashed_password = get_password_hash(user_in.password)
     db_user = UserModel(
-        email=user_in.email,
-        hashed_password=hashed_password,
-        is_admin=False  
+        email=user_in.email, hashed_password=hashed_password, is_admin=False
     )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
+
 @router.post("/login")
 def login(
-    db: Session = Depends(get_db),
-    form_data: OAuth2PasswordRequestForm = Depends()
+    db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
     user = db.query(UserModel).filter(UserModel.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
@@ -80,14 +80,14 @@ def login(
         )
     access_token_expires = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     access_token = create_access_token(
-        data={"sub": user.email},
-        expires_delta=access_token_expires
+        data={"sub": user.email}, expires_delta=access_token_expires
     )
-    return {
-        "access_token": access_token,
-        "token_type": "bearer"
-    }
-def get_current_admin_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+def get_current_admin_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(status_code=403, detail="Not authorized")
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
@@ -100,7 +100,7 @@ def get_current_admin_user(token: str = Depends(oauth2_scheme), db: Session = De
     user = db.query(User).filter(User.id == user_id).first()
     if not user or not user.is_admin:  # Check boolean field
         raise credentials_exception
-    
+
     return user
 
 

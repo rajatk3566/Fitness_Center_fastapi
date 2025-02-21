@@ -1,6 +1,7 @@
 import pytest
 from app.core.security import get_password_hash
 
+
 @pytest.mark.auth
 class TestAuth:
     @pytest.mark.parametrize(
@@ -22,31 +23,48 @@ class TestAuth:
         if email == "existing@example.com":
             first_response = client.post(
                 "/api/v1/auth/signup",
-                json={"email": email, "password": "StrongPass123"}
+                json={"email": email, "password": "StrongPass123"},
             )
             assert first_response.status_code == 201
-    
+
         response = client.post(
-            "/api/v1/auth/signup",
-            json={"email": email, "password": password}
+            "/api/v1/auth/signup", json={"email": email, "password": password}
         )
         assert response.status_code == expected_status
 
     @pytest.mark.parametrize(
         "login_data, expected_status",
         [
-            ({"username": "test@example.com", "password": "StrongPass123"}, 200),  # Valid login
-            ({"username": "test@example.com", "password": "WrongPass123"}, 401),  # Wrong password
-            ({"username": "nonexistent@example.com", "password": "StrongPass123"}, 401),  # Non-existent user
-            ({"username": "test@example.com", "password": ""}, 401),  # Empty password returns 401
-            ({"username": "", "password": "StrongPass123"}, 401),  # Empty username returns 401
-        ]
+            (
+                {"username": "test@example.com", "password": "StrongPass123"},
+                200,
+            ),  # Valid login
+            (
+                {"username": "test@example.com", "password": "WrongPass123"},
+                401,
+            ),  # Wrong password
+            (
+                {"username": "nonexistent@example.com", "password": "StrongPass123"},
+                401,
+            ),  # Non-existent user
+            (
+                {"username": "test@example.com", "password": ""},
+                401,
+            ),  # Empty password returns 401
+            (
+                {"username": "", "password": "StrongPass123"},
+                401,
+            ),  # Empty username returns 401
+        ],
     )
     def test_login_scenarios(self, client, db, login_data, expected_status):
-        if login_data["username"] == "test@example.com" and login_data["password"] != "":
+        if (
+            login_data["username"] == "test@example.com"
+            and login_data["password"] != ""
+        ):
             signup_response = client.post(
                 "/api/v1/auth/signup",
-                json={"email": "test@example.com", "password": "StrongPass123"}
+                json={"email": "test@example.com", "password": "StrongPass123"},
             )
             assert signup_response.status_code == 201
 
@@ -59,32 +77,27 @@ class TestAuth:
     def test_get_current_user(self, client, db):
         signup_response = client.post(
             "/api/v1/auth/signup",
-            json={"email": "test@example.com", "password": "StrongPass123"}
+            json={"email": "test@example.com", "password": "StrongPass123"},
         )
         assert signup_response.status_code == 201
 
         login_response = client.post(
             "/api/v1/auth/login",
-            data={"username": "test@example.com", "password": "StrongPass123"}
+            data={"username": "test@example.com", "password": "StrongPass123"},
         )
         assert login_response.status_code == 200
         token = login_response.json()["access_token"]
 
-       
         me_response = client.get(
-            "/api/v1/auth/me",
-            headers={"Authorization": f"Bearer {token}"}
+            "/api/v1/auth/me", headers={"Authorization": f"Bearer {token}"}
         )
         assert me_response.status_code == 200
         assert me_response.json()["email"] == "test@example.com"
 
-        
         invalid_response = client.get(
-            "/api/v1/auth/me",
-            headers={"Authorization": "Bearer invalid_token"}
+            "/api/v1/auth/me", headers={"Authorization": "Bearer invalid_token"}
         )
         assert invalid_response.status_code == 401
 
-        
         no_token_response = client.get("/api/v1/auth/me")
         assert no_token_response.status_code == 401
