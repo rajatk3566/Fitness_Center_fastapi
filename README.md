@@ -26,6 +26,7 @@ Swagger : ``` http://127.0.0.1:8000/docs ```
 ```
 └── 📁Fitness_center
     └── 📁app
+        └── __init__.py
         └── 📁api
             └── __init__.py
             └── deps.py
@@ -35,6 +36,7 @@ Swagger : ``` http://127.0.0.1:8000/docs ```
                 └── auth.py
                 └── members.py
                 └── router.py
+        └── config.py
         └── 📁core
             └── __init__.py
             └── config.py
@@ -50,13 +52,21 @@ Swagger : ``` http://127.0.0.1:8000/docs ```
             └── __init__.py
             └── member.py
             └── user.py
+        └── 📁tests
+            └── __init__.py
+            └── conftest.py
+            └── test_auth.py
+            └── test_member.py
+            └── test_membership.py
+    └── .env
     └── .gitignore
     └── README.md
     └── requirement.txt
+    └── test_fitness_center.db
 ```
 
 
-# Setup
+#  To Setup
 
 1. To clone the repository:
 
@@ -83,4 +93,25 @@ pip install -r requirements.txt
 ```bash
 uvicorn app.main:app -reload
 ```
+
+
+# Test Suite for Fitness Center Membership Management (FastAPI)
+
+## Overview
+This test suite ensures the correctness of the Fitness Center Membership Management system built with FastAPI. It covers authentication, database interactions, and API responses.
+
+# To Setup 
+
+1) Install dependencies
+ ```bash
+pip install -r requirements.txt
+```
+2) To run all Tests
+
+```bash
+pytest
+```
+
+
+
 
