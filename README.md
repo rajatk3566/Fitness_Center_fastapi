@@ -88,7 +88,7 @@ pip install -r requirements.txt
 ```
 
 
-6. To run the application:
+4. To run the application:
 
 ```bash
 uvicorn app.main:app -reload
